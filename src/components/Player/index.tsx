@@ -15,22 +15,30 @@ export const Player: React.FC<Props> = ({ track, onNext, onPrev }) => {
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
 
+
   useEffect(() => {
     if (track && audioRef.current) {
-      audioRef.current.play()
-        .then(() => setIsPlaying(true))
-        .catch(e => console.error("Playback error:", e));
+      const playPromise = audioRef.current.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          if (error.name !== 'AbortError') {
+            console.error("Playback error:", error);
+            setIsPlaying(false);
+          }
+        });
+      }
     }
   }, [track]);
 
   const togglePlay = () => {
     if (!audioRef.current) return;
-    if (isPlaying) {
-      audioRef.current.pause();
+    
+    if (audioRef.current.paused) {
+      audioRef.current.play().catch(e => console.error("Play failed", e));
     } else {
-      audioRef.current.play();
+      audioRef.current.pause();
     }
-    setIsPlaying(!isPlaying);
   };
 
   if (!track) return null;
@@ -57,7 +65,9 @@ export const Player: React.FC<Props> = ({ track, onNext, onPrev }) => {
           max={duration || 0} 
           value={progress}
           onChange={(e) => {
-            if(audioRef.current) audioRef.current.currentTime = Number(e.target.value);
+            if(audioRef.current) {
+                audioRef.current.currentTime = Number(e.target.value);
+            }
           }}
           className="seek-slider"
         />
@@ -67,6 +77,8 @@ export const Player: React.FC<Props> = ({ track, onNext, onPrev }) => {
       <audio 
         ref={audioRef}
         src={track.mp3}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
         onTimeUpdate={(e) => setProgress(e.currentTarget.currentTime)}
         onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
         onEnded={onNext}

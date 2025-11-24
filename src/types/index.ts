@@ -26,6 +26,13 @@ export interface Show {
   tags: string[];
 }
 
+export interface ShowsResponse {
+  current_page: number;
+  total_entries: number;
+  total_pages: number;
+  shows: Show[]; 
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data: T;

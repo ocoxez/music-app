@@ -1,20 +1,23 @@
-import { ApiResponse, Show } from '../types';
+import { ShowsResponse, Show, ApiResponse } from '../types';
 
 const BASE_URL = 'https://phish.in/api/v2';
 
 async function request<T>(endpoint: string): Promise<T> {
-  const response = await fetch(`${BASE_URL}${endpoint}`);
+  const response = await fetch(`${BASE_URL}${endpoint}`, {
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
   if (!response.ok) {
-    throw new Error(`API Error: ${response.statusText}`);
+    throw new Error(`API Error: ${response.status} ${response.statusText}`);
   }
-  const json = await response.json();
-  return json; 
+  return response.json();
 }
 
 export const api = {
   getRecentShows: (page = 1, perPage = 20) => 
-    request<ApiResponse<Show[]>>(`/shows?page=${page}&per_page=${perPage}&sort_attr=date&sort_dir=desc`),
+    request<ShowsResponse>(`/shows?page=${page}&per_page=${perPage}&sort_attr=date&sort_dir=desc`),
   
-  getShow: (id: number) => 
-    request<ApiResponse<Show>>(`/shows/${id}`)
+  getShow: (idOrDate: string | number) => 
+    request<any>(`/shows/${idOrDate}`)
 };

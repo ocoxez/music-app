@@ -1,0 +1,50 @@
+.track-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  padding-bottom: 100px;
+}
+
+.track-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--bg-hover);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.track-item:hover {
+  background-color: var(--bg-hover);
+}
+
+.track-item.active {
+  background-color: rgba(0, 230, 118, 0.08);
+}
+
+.track-item.active .track-title,
+.track-item.active .track-pos {
+  color: var(--accent-color);
+}
+
+.track-pos {
+  width: 40px;
+  color: var(--text-secondary);
+  font-family: monospace;
+  font-size: 0.9rem;
+}
+
+.track-info {
+  flex: 1;
+}
+
+.track-title {
+  font-weight: 500;
+  display: block;
+}
+
+.track-duration {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-family: monospace;
+}
